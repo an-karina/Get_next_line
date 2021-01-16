@@ -1,3 +1,4 @@
+#include "get_next_line.h"
 
 size_t		ft_strlen(const char *s)
 {
@@ -107,4 +108,25 @@ char	*ft_strchr(const char *s, int c)
 	if (sym == '\0')
 		return (p);
 	return (NULL);
+}
+
+char	*ft_strdup(const char *s1)
+{
+	char	*p;
+	int		len;
+	int		i;
+
+	i = 0;
+	len = ft_strlen(s1);
+	p = malloc(sizeof(char) * (len + 1));
+	if (p)
+	{
+		while (len--)
+		{
+			p[i] = s1[i];
+			i++;
+		}
+		p[i] = '\0';
+	}
+	return (p);
 }

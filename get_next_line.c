@@ -1,40 +1,60 @@
-//#include "get_next_line.h"
-int BUFFER_SIZE 32;
+#include "get_next_line.h"
 
-void	find_new_line(char *string, char **line)
+int		find_new_line(char *string, char **line, int count)
 {
-	int i;
+	int		i;
+	char	*temporary;
 
 	i = 0;
-	while (s != '\n')
-		(*line)[i++] = *s++;
+	if (count == 0 && !string)
+		return (0);
+	while (string[i] != '\n')
+	{
+		if (string[i] == '\0')
+		{
+			*line = ft_strdup(string);
+			//printf("%s\n", *line);
+			free(string);
+			return (0);
+		}
+		i++;
+	}
+	string[i++] = '\0';
+	*line = ft_strdup(string);
+	temporary = ft_strdup(string + i);
+	free(string);
+	string = temporary;
+	return (1);
 }
 
 int		get_next_line(int fd, char **line)
 {
-	static	fd_buffer[1024]={0};
-	char	*read_buffer;
-	char	*temporary;
-	int		count;
+	static char	*fd_buffer;
+	char		*read_buffer;
+	char		*temporary;
+	int			count;
 
 	read_buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!(read_buffer) || (fd < 0) || (!line))
 		return (-1);
-	
 	while (count = read(fd, read_buffer, BUFFER_SIZE))
 	{
 		if (count == -1)
 			return (-1);
+		//printf(" COUNT %d\n", count);
 		read_buffer[count] = '\0';
-		if (!fd_buffer[fd])
-			if (!(fd_buffer[fd] = ft_calloc(1)))
+		//printf("READ_BUFFER %s\n", read_buffer);
+		if (!fd_buffer)
+			if (!(fd_buffer = ft_calloc(1, 1)))
 				return (-1);
-		if (!(temporary = ft_strjoin(fd_buffer[fd], read_buffer)))
+		if (!(temporary = ft_strjoin(fd_buffer, read_buffer)))
 			return (-1);
-		free(fd_buffer[fd]);
-		fd_buffer[fd] = temporary;
-		if (ft_strchr(fd_buffer[fd], '/n'))
+		//printf("TEMPORARY %s\n", temporary);
+		free(fd_buffer);
+		fd_buffer = temporary;
+		if (ft_strchr(fd_buffer, '\n'))
 			break;
 	}
-	find_new_line(fd_buffer[fd], line);
+	printf(" COUNT %d\n", count);
+	return (find_new_line(fd_buffer, line, count));
 }
